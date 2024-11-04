@@ -12,7 +12,6 @@ component "ML Prep Backend\n(Processor)\n<Python>" as mlPrep
 component "Dataset 1\n(UN Data)\n<JSON>" as dataset1
 component "Conversion\nScript\n<Python>" as conversion
 component "Streamlit\nFrontend\n<Python>" as streamlit
-component TEST
 
 client -right-> streamlit
 streamlit -down-> kafka: REST
