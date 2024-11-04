@@ -1,0 +1,31 @@
+@startuml
+skinparam linetype ortho
+skinparam defaultTextAlignment center
+skinparam  true
+actor Client as client
+component "Conversion +\nSimulation Script\n<Python>" as conversionSim
+component "Dataset 2\n(Live-Simulation)\n<JSON>" as dataset2
+collections "Kafka" as kafka
+component HDFS as hdfs
+collections "ML Backend\n<Python>" as ml
+component "ML Prep Backend\n(Processor)\n<Python>" as mlPrep
+component "Dataset 1\n(UN Data)\n<JSON>" as dataset1
+component "Conversion\nScript\n<Python>" as conversion
+component "Streamlit\nFrontend\n<Python>" as streamlit
+
+client -right-> streamlit
+streamlit -down-> kafka: REST
+kafka -> ml
+kafka -> hdfs
+kafka -down-> mlPrep
+hdfs -> ml
+hdfs -left-> mlPrep
+mlPrep -> hdfs
+dataset2 -> conversionSim: JSON
+conversionSim -right-> kafka: Avro
+
+
+
+dataset1 -> conversion: JSON
+conversion -up-> hdfs
+@enduml
