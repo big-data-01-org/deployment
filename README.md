@@ -1,3 +1,3 @@
 # bigdata-01-deployment
 ## Deployment Architecture
-![Deployment Diagram](deployment.png)
+![Deployment Diagram](deployment.svg)

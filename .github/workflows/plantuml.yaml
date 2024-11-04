@@ -19,6 +19,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+
+    - name: Move PNGs to the root directory
+      run: |
+        find example -name '*.svg' -exec mv {} . \;
+
     - name: Configure git
       run: |
         git config --global user.name "github-actions"
