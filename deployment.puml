@@ -1,7 +1,14 @@
 @startuml
+hide stereotype
+<style>
+.dashed {
+    LineStyle 5
+    FontColor Black
+}
+</style>
 skinparam linetype ortho
 skinparam defaultTextAlignment center
-skinparam  true
+skinparam componentStyle rectangle
 actor Client as client
 component "Conversion +\nSimulation Script\n<Python>" as conversionSim
 component "Dataset 2\n(Live-Simulation)\n<JSON>" as dataset2
@@ -12,20 +19,30 @@ component "ML Prep Backend\n(Processor)\n<Python>" as mlPrep
 component "Dataset 1\n(UN Data)\n<JSON>" as dataset1
 component "Conversion\nScript\n<Python>" as conversion
 component "Streamlit\nFrontend\n<Python>" as streamlit
+rectangle "ML Model\n<Deployment>" as model <<dashed>>
 
-client -right-> streamlit
-streamlit -down-> kafka: REST
-kafka -> ml
-kafka -> hdfs
-kafka -down-> mlPrep
-hdfs -> ml
-hdfs -left-> mlPrep
-mlPrep -> hdfs
+client -left-> streamlit
 dataset2 -> conversionSim: JSON
-conversionSim -right-> kafka: Avro
-
-
+streamlit -> hdfs: SparkSQL\nPredictions
+streamlit -> kafka: Subscribes
+conversionSim -> kafka: JSON
+kafka -> hdfs: JSON
+kafka -> mlPrep: JSON
+ml -> kafka: JSON
 
 dataset1 -> conversion: JSON
-conversion -up-> hdfs
+conversion -> hdfs: JSON
+
+' kafka -down-> mlPrep: JSON
+' hdfs -> ml
+' hdfs -left-> mlPrep
+' mlPrep -> hdfs
+' streamlit -> hdfs: SparkSQL Predictions
+
+' hdfs .- model
+' model .> ml
+
+
+' dataset1 -> conversion: JSON
+' conversion -up-> hdfs: JSON
 @enduml
