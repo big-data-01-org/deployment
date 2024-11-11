@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: streamlit-frontend
-        image: docker pull ghcr.io/big-data-01-org/frontend/frontend:latest
+        image: ghcr.io/big-data-01-org/frontend/frontend:latest
         resources:
           requests:
             memory: "64Mi"
