@@ -1,3 +1,19 @@
+# NEW USING PYTHON
+
+## Install requirements
+
+```bash
+pip install -r requirements.txt
+```
+
+## Run the producer
+
+```bash
+python kafka.py
+```
+
+# OUTDATED:::
+
 # Use Helm To Install Kafka
 
 helm install --values kafka-values.yaml kafka oci://registry-1.docker.io/bitnamicharts/kafka --version 30.0.4
