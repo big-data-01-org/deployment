@@ -69,14 +69,70 @@ metadata:
     app: kafka
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
   template:
     metadata:
       labels:
         app: kafka
     spec:
       containers:
-        - name: kafka-container
+        - name: kafka
           image: apache/kafka:3.9
+          ports:
+            - containerPort: 9092
+          env:
+            - name: KAFKA_BROKER_ID # Single node setup
+              value: "1"
+            - name: KAFKA_ZOOKEEPER_CONNECT # single node setup
+              value: "zookeeper-service:2181"
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: PLAINTEXT://kafka-service:9092 # For streamlit
+            - name: KAFKA_LISTENERS
+              value: PLAINTEXT://0.0.0.0:9092
+            - name: KAFKA_LOG_DIRS
+              value: "/var/lib/kafka"
+          volumeMounts:
+            - name: kafka-data
+              mountPath: /var/lib/kafka
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1000m" # 1 CPU core
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: kafka-data
+          persistentVolumeClaim: # Persistent volume claim for Kafka data, to persist data even if the pod is deleted
+            claimName: kafka-pvc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper-deployment
+  labels:
+    app: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: bitnami/zookeeper:3.9
+          ports:
+            - containerPort: 2181
+          env:
+            - name: ALLOW_ANONYMOUS_LOGIN
+              value: "yes"
           resources:
             limits:
               memory: "512Mi"
@@ -84,11 +140,6 @@ spec:
             requests:
               memory: "256Mi"
               cpu: "250m"
-          ports:
-            - containerPort: 9098
-selector:
-  matchLabels:
-    app: kafka
 
 ---
 apiVersion: apps/v1
@@ -101,6 +152,32 @@ spec:
     app: kafka
   ports:
     - protocol: TCP
-      port: 9098
-      targetPort: 9098
-      nodePort: 30001 # Kubernetes will expose the service on a port in the range 30000-32767
+      port: 9092
+      targetPort: 9092
+      nodePort: 30092 # Streamlit can use this port to connect to Kafka, eg: localhost:30092 or cluster-ip:30092
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-service
+spec:
+  type: ClusterIP
+  selector:
+    app: zookeeper
+  ports:
+    - protocol: TCP
+      port: 2181
+      targetPort: 2181
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
