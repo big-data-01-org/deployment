@@ -15,19 +15,39 @@ spec:
         app: streamlit-frontend
     spec:
       containers:
-      - name: streamlit-frontend
-        image: ghcr.io/big-data-01-org/frontend/frontend:latest
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: 8501
+        - name: streamlit-frontend
+          image: ghcr.io/big-data-01-org/frontend/frontend:latest
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8501
 ---
-apiVersion: v1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hadoop-deployment
+  labels:
+    app: hadoop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hadoop
+  template:
+    metadata:
+      labels:
+        app: hadoop
+    spec:
+      containers:
+        - name: hadoop
+          image: apache/hadoop:latest
+---
+apiVersion: apps/v1
 kind: Service
 metadata:
   name: streamlit-frontend-service
@@ -41,7 +61,7 @@ spec:
       targetPort: 8501
       nodePort: 30000 # Kubernetes will expose the service on a port in the range 30000-32767
 ---
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kafka-deployment
@@ -71,7 +91,7 @@ selector:
     app: kafka
 
 ---
-apiVersion: v1
+apiVersion: apps/v1
 kind: Service
 metadata:
   name: kafka-service
@@ -84,5 +104,3 @@ spec:
       port: 9098
       targetPort: 9098
       nodePort: 30001 # Kubernetes will expose the service on a port in the range 30000-32767
----
-
