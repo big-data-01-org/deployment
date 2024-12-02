@@ -22,7 +22,7 @@ spec:
             - containerPort: 9864
           env:
             - name: SERVICE_PRECONDITION
-              value: "namenode:9870"
+              value: "hadoop-namenode:9870"
           envFrom:
             - configMapRef:
                 name: hadoop-config
