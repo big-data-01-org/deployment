@@ -61,6 +61,36 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: machine-learning-deployment
+  labels:
+    app: machine-learning
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: machine-learning
+  template:
+    metadata:
+      labels:
+        app: machine-learning
+    spec:
+      containers:
+        - name: machine-learning
+          image: ghcr.io/big-data-01-org/backend/machine-learning:latest
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: kafka-deployment
   labels:
     app: kafka
