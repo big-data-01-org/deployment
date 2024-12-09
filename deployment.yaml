@@ -55,7 +55,6 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
-      restartPolicy: Never
 
 ---
 
@@ -85,7 +84,6 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
-      restartPolicy: Never
 
 ---
 
