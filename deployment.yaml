@@ -49,12 +49,11 @@ spec:
           image: ghcr.io/big-data-01-org/backend/data-ingestion:latest
           resources:
             requests:
-              memory: "64Mi"
+              memory: "5000Mi"
               cpu: "250m"
             limits:
-              memory: "128Mi"
+              memory: "10000Mi"
               cpu: "500m"
-      restartPolicy: Never
 
 ---
 apiVersion: apps/v1
