@@ -28,7 +28,6 @@ spec:
             - containerPort: 8501
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -58,7 +57,6 @@ spec:
       restartPolicy: Never
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -85,11 +83,9 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
-      restartPolicy: Never
+      restartPolicy: Always
 
 ---
-
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -134,11 +130,12 @@ spec:
 
             # Metadata quorum configuration
             - name: KAFKA_CONTROLLER_QUORUM_VOTERS
-              value: "1@localhost:9093"
+              value: "1@kafka-service:9093"
 
             # Controller listener names
             - name: KAFKA_CONTROLLER_LISTENER_NAMES
               value: "CONTROLLER"
+
             # Logs and replication settings
             - name: KAFKA_LOG_DIRS
               value: "/tmp/kafka-logs"
@@ -148,23 +145,24 @@ spec:
               value: "1"
             - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
               value: "1"
+            - name: "KAFKA_NUM_PARTITIONS"
+              value: "3"
           volumeMounts:
             - name: kafka-data
               mountPath: /var/lib/kafka
           resources:
             limits:
-              memory: "1Gi"
+              memory: "4Gi"
               cpu: "1000m" # 1 CPU core
             requests:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "4Gi"
+              cpu: "1000m" # 1 CPU core
       volumes:
         - name: kafka-data
           persistentVolumeClaim: # Persistent volume claim for Kafka data, to persist data even if the pod is deleted
             claimName: kafka-pvc
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -180,7 +178,6 @@ spec:
       nodePort: 30501
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -188,7 +185,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: kafkal
+    app: kafka
   ports:
     - name: kafka-port
       protocol: TCP
@@ -202,7 +199,6 @@ spec:
       nodePort: 30093
 
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
