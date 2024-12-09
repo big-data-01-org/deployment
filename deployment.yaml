@@ -208,3 +208,19 @@ spec:
   resources:
     requests:
       storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: prediction-service
+spec:
+  type: NodePort
+  selector:
+    app: prediction
+  ports:
+    - protocol: TCP
+      port: 8502
+      targetPort: 8502
+      nodePort: 30502
