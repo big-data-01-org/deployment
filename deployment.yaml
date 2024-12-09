@@ -240,3 +240,34 @@ spec:
       port: 8503
       targetPort: 8503
       nodePort: 30503
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predictor-deployment
+  labels:
+    app: predictor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: predictor
+  template:
+    metadata:
+      labels:
+        app: predictor
+    spec:
+      containers:
+        - name: predictor
+          image: ghcr.io/big-data-01-org/backend/predictor:latest
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8503
