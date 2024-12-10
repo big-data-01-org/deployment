@@ -135,6 +135,10 @@ spec:
             - name: KAFKA_CONTROLLER_LISTENER_NAMES
               value: "CONTROLLER"
 
+            # Auto Create topcis
+            - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"
+
             # Logs and replication settings
             - name: KAFKA_LOG_DIRS
               value: "/tmp/kafka-logs"
@@ -210,7 +214,6 @@ spec:
       storage: 1Gi
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -226,7 +229,6 @@ spec:
       nodePort: 30502
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -242,7 +244,6 @@ spec:
       nodePort: 30503
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -273,7 +274,6 @@ spec:
             - containerPort: 8503
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
