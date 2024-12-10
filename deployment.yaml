@@ -92,7 +92,7 @@ metadata:
   labels:
     app: kafka
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: kafka
@@ -250,7 +250,7 @@ metadata:
   labels:
     app: predictor
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: predictor
