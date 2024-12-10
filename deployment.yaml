@@ -274,16 +274,31 @@ spec:
 
 ---
 
-apiVersion: v1
-kind: Service
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: consumer-service
+  name: olympics-consumer-deployment
+  labels:
+    app: olympics-consumer
 spec:
-  type: NodePort
+  replicas: 1
   selector:
-    app: consumer
-  ports:
-    - protocol: TCP
-      port: 8504
-      targetPort: 8504
-      nodePort: 30504
+    matchLabels:
+      app: olympics-consumer
+  template:
+    metadata:
+      labels:
+        app: olympics-consumer
+    spec:
+      containers:
+        - name: olympics-consumer
+          image: ghcr.io/big-data-01-org/backend/olympics-consumer:latest
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8504
